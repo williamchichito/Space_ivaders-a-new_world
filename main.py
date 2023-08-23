@@ -1,106 +1,150 @@
-# Import pygame
-import pygame
-
-# Import random library
+# Importing pygame 
+from asyncio import windows_events
+import pygame 
 import random
+#intalizatin pygame 
+pygame.init() 
 
-# Initializate pygame
-pygame.init()
+# wowndow slize 
 
-# Window size
-SCREEN_WIDTH = 800
+screen_width = 800 
+screen_height = 600 
 
-SCREEN_HEIGHT = 600
+# size variable 
+size = (screen_width, screen_height)  
 
-# Size variable
-SIZE = ( SCREEN_WIDTH, SCREEN_HEIGHT )
+# Title 
+pygame.display.set_caption("Sapace Invaders by willyWonka")
 
-# Display the windows
-screen = pygame.display.set_mode( SIZE )
+# icon
+icon = pygame.image.load("./main.pygame/enemigo.png")
+pygame.display.set_icon(icon)
 
-# Title
-pygame.display.set_caption("Space Invaders @Adakademy")
+# background img
+background = pygame.image.load("./main.pygame/un-espacio-con-muchas-estrellas-y-planetas--y-sin-humanos-447174450.png")
 
-# Icon
-icon = pygame.image.load( "ufo.png" )
-pygame.display.set_icon( icon )
+screen = pygame.display.set_mode(size)
+  
 
-# Player
-player_img = pygame.image.load( "player_a.png" )
+# bala 
+bala_x = 370
+bala_y = 480
+bala_image = pygame.image.load("./main.pygame/bala.png")  
+bala_img_tr = pygame.transform.scale(bala_image,(64,64))
+bala_x_change = 0
+bala_y_change = 10
+bala_state = True
+
+def fire(x,y): 
+    global bala_state 
+    bala_state = False
+    screen.blit(bala_img_tr,(x,y))
+
+   # PLAYER FUNTION 
+
 player_x = 370
 player_y = 480
+player_image = pygame.image.load("./main.pygame/astronave.png") 
 player_x_change = 0
+ 
+def player(x,y): 
+    screen.blit(player_image,(x,y))
+ 
+ #enemy
 
-# Enemy
-enemy_img = pygame.image.load("enemy_a.png")
-enemy_x = random.randint(0, 736)
-enemy_y = random.randint(50, 150)
-enemy_x_change = 0.1  
-enemy_y_change = 30
-# Player function
-def player(x, y):
-    screen.blit( player_img, (x, y))
+enemy_x = random.randint(0,300)
+enemy_y =  random.randint(0,300)
+enemy_image = pygame.image.load("./main.pygame/enemigo.png") 
+enemy_img_tr = pygame.transform.scale(enemy_image,(64,64))
+enemy_x_change = 4
+enemy_y_change = 40
+ 
+def enemy(x,y): 
+    screen.blit(enemy_img_tr,(x,y))
 
-# Enemy function
-def enemy(x, y):
-    screen.blit( enemy_img, (x, y))    
 
-# Game loop
+
+    # surperficie                                                                                         
 running = True
-while running:
 
-    # Increase the speed in x
-    #player_x += 0.1
-    #print( player_x )
+while running: 
+    for event  in pygame.event.get(): 
+        if event.type == pygame.QUIT: 
+         running = False 
+        # keyboard inputs
+        if event.type == pygame.KEYDOWN: 
+           
+           if event.key == pygame.K_LEFT:
+            player_x_change = -1.5
 
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-        if event.type == pygame.KEYDOWN:
-
-            if event.key == pygame.K_LEFT:
-                player_x_change = -0.5
-
-            if event.key == pygame.K_RIGHT:
-                player_x_change = 0.5
+           if event.key == pygame.K_RIGHT:
+            player_x_change = 1.5 
+          
+           if event.key == pygame.K_SPACE:
+            fire(player_x,bala_y)
 
         if event.type == pygame.KEYUP:
 
-            if event.key == pygame.K_LEFT or pygame.K_RIGHT:
+            if event.key == pygame.K_LEFT:
+                player_x_change = -0
+
+
+            if event.key == pygame.K_RIGHT:
                 player_x_change = 0
 
+        
+        
+
+#blit of the background 
+    screen.blit(background, (0,0)) 
+# bala movements 
 
 
-    # Background color RGB -> Red, Green, Blue
-    RGB = (100, 100, 100)
-    screen.fill( RGB )
+    if bala_state == False: 
+            fire(player_x,bala_y) 
+            bala_y -= bala_y_change
+       
 
-    # Increment or decrement the x variable
-    player_x += player_x_change
-
-    # Player boundaries left
-    if player_x <= 0:
-        player_x = 0
-
-    # Player boundaries right
-    elif player_x >= 736:
-        player_x = 736
+#player movements
     
-    enemy_x += enemy_x_change 
-    if enemy_x >= 736:
-        enemy_x_change = -0.1 
+    player_x += player_x_change
+    
+    player(player_x,player_y)
+
+    if player_x <= 0:
+       player_x = 0
+    
+    elif player_x >= 750: 
+       player_x = 750 
+
+# enemy movements
+
+    enemy(enemy_x,enemy_y)
+ 
+    enemy_x += enemy_x_change
+    if enemy_x <= 0 : 
+        enemy_x_change = 4
         enemy_y += enemy_y_change
 
-    elif enemy_x <= 0:
-        enemy_x_change += 0.1 
+    elif enemy_x >= 736 : 
+        enemy_x_change = -4
         enemy_y += enemy_y_change 
-    # Call the player function
-    player(player_x, player_y)
 
-        # Call the player function
-    enemy(enemy_x, enemy_y)
 
-        # Update the window
-    pygame.display.update()
+    if bala_state == False: 
+            fire(player_x,bala_y) 
+            bala_x == bala_y_change
+       
+       
+
+    # bala movements 
+
+    pygame.display.flip() 
+
+pygame.quit() 
+
+
+
+
+     
