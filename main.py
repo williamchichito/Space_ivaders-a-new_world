@@ -1,7 +1,9 @@
 # Importing pygame 
 from asyncio import windows_events
+from turtle import distance
 import pygame 
-import random
+import random 
+import math
 #intalizatin pygame 
 pygame.init() 
 
@@ -39,6 +41,14 @@ def fire(x,y):
     global bala_state 
     bala_state = False
     screen.blit(bala_img_tr,(x,y))
+# collision 
+
+def is_collision (b_x, b_y, e_x, e_y): 
+   distance = math.sqrt((e_x - b_x)**2 + (e_y - b_y)**2) 
+   if distance < 27: 
+     return True 
+   else: 
+     return False
 
    # PLAYER FUNTION 
 
@@ -60,13 +70,13 @@ enemy_x_change = 4
 enemy_y_change = 40
  
 def enemy(x,y): 
-    screen.blit(enemy_img_tr,(x,y))
+    screen.blit(enemy_img_tr,(x,y))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
 
 
     # surperficie                                                                                         
 running = True
-
+clock = pygame.time.Clock()
 while running: 
     for event  in pygame.event.get(): 
         if event.type == pygame.QUIT: 
@@ -81,8 +91,9 @@ while running:
            if event.key == pygame.K_RIGHT:
             player_x_change = 1.5 
           
-           if event.key == pygame.K_SPACE:
-            fire(player_x,bala_y)
+           if event.key == pygame.K_SPACE and bala_state == True: 
+            bala_x =  player_x
+            fire(bala_x,bala_y)
 
         if event.type == pygame.KEYUP:
 
@@ -95,16 +106,25 @@ while running:
 
         
         
-
+    
 #blit of the background 
     screen.blit(background, (0,0)) 
 # bala movements 
 
-
+ 
     if bala_state == False: 
-            fire(player_x,bala_y) 
-            bala_y -= bala_y_change
+        fire(bala_x,bala_y) 
+        bala_y -= bala_y_change
        
+    if bala_y <= 0: 
+      bala_y = 480 
+      bala_state = True
+    collision = is_collision(bala_x, bala_y, enemy_x, enemy_y)
+    if collision: 
+        bala_y = 480 
+        bala_state = True 
+        enemy_x = random.randint(0,300)
+        enemy_y =  random.randint(0,300)
 
 #player movements
     
@@ -132,11 +152,7 @@ while running:
         enemy_y += enemy_y_change 
 
 
-    if bala_state == False: 
-            fire(player_x,bala_y) 
-            bala_x == bala_y_change
-       
-       
+   
 
     # bala movements 
 
