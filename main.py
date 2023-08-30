@@ -4,8 +4,9 @@ from turtle import distance
 import pygame 
 import random 
 import math 
-import os
+import os 
 
+from pygame import mixer
 #intalizatin pygame 
 pygame.init() 
 
@@ -22,8 +23,11 @@ pygame.display.set_caption("Sapace Invaders by willyWonka")
 
 # icon
 icon = pygame.image.load("./main.pygame/enemigo.png")
-pygame.display.set_icon(icon)
-
+pygame.display.set_icon(icon) 
+# Backgraiund sounds 
+mixer.music.load("./main.pygame/ruta.wav") 
+mixer.music.play( -1 )
+   
 # background img
 background = pygame.image.load("./main.pygame/un-espacio-con-muchas-estrellas-y-planetas--y-sin-humanos-447174450.png")
 
@@ -53,7 +57,7 @@ bala_state = True
 
 def fire(x,y): 
     global bala_state 
-    bala_state = False
+    bala_state = False 
     screen.blit(bala_img_tr,(x,y))
 # collision 
 
@@ -66,7 +70,12 @@ def is_collision (b_x, b_y, e_x, e_y):
    
 def game_over(x,y): 
     go_text = score_font.render("Game over" , True,(255,255,255)) 
+    game_over_sounds = mixer.Sound("./main.pygame/game.wav") 
+    game_over_sounds.play() 
+    go_condicion = False
+
     screen.blit(go_text, (x,y)) 
+
 def show_score(x,y): 
     score_text =score_font.render("score: "+ str(score),True,(255,255,255) ) 
     screen.blit(score_text, (x,y))
@@ -91,11 +100,11 @@ enemy_y_change = [ ]
 number_enemies = 8 
  
 for item in range(number_enemies): 
-   enemy_image.append(pygame.image.load("./main.pygame/enemigopro.png")) 
+   enemy_image.append(pygame.image.load("./main.pygame/pngwing.com.png")) 
    enemy_x.append(random.randint(0,735)) 
    enemy_y.append(random.randint(50,150)) 
    enemy_x_change.append(4) 
-   enemy_x_change.append(40)
+   enemy_y_change.append(40)
 def enemy(x,y, item ): 
     screen.blit(enemy_image[ item],(x,y))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
@@ -119,7 +128,9 @@ while running:
                 player_x_change = 1.5 
           
            if event.key == pygame.K_SPACE and bala_state == True: 
-                bala_x =  player_x
+                bala_x =  player_x 
+                sonido_de_bala = mixer.Sound("./main.pygame/bala.wav")
+                sonido_de_bala.play()
                 fire(bala_x,bala_y)
 
         if event.type == pygame.KEYUP:
@@ -161,11 +172,13 @@ while running:
             player_x = 750 
 
     # enemy movements 
-    for item in range  ( number_enemies ):
+    for item in range( number_enemies ):
             
             if enemy_y[ item] > 440:
                 for j in range (number_enemies) : 
-                    enemy_y[j] =2000
+                    enemy_y[j] =2000 
+                game_over(go_x,go_y)
+                break 
 
             collision = is_collision(bala_x, bala_y, enemy_x[item], enemy_y[ item])
             if collision: 
@@ -182,10 +195,10 @@ while running:
                 enemy_x_change[ item] = 4
                 
 
-            elif enemy_x[ item] >= 736 : 
-                enemy_x_change[ item] = -4
+            elif enemy_x[item] >= 736 : 
+                enemy_x_change[item] = -4 
+                enemy_y[item] += enemy_y_change[ item]
 
-            
             enemy(enemy_x[ item],enemy_y[ item], item)
         
 
