@@ -66,8 +66,8 @@ def is_collision (b_x, b_y, e_x, e_y):
    if distance < 27: 
      return True 
    else: 
-     return False 
-   
+     return False  
+ 
 def game_over(x,y): 
     go_text = score_font.render("Game over" , True,(255,255,255)) 
     game_over_sounds = mixer.Sound("./main.pygame/game.wav") 
@@ -187,6 +187,8 @@ while running:
                 score += 25
                 enemy_x[ item] = random.randint(0,300)
                 enemy_y[ item] =  random.randint(0,300)
+                collision_sounds = mixer.Sound("./main.pygame/explosiòn.wav")
+                collision_sounds.play()
 
             
                 
